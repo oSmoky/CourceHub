@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - CourseHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="h2 mb-1">Admin Panel</h1>
+        <p class="text-muted mb-0">Manage users, courses, lessons, and enrollments.</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-primary" href="{{ url_for('admin.create_user') }}">New User</a>
+        <a class="btn btn-primary" href="{{ url_for('admin.create_course') }}">New Course</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-tile">
+            <span class="text-muted small">Users</span>
+            <strong>{{ users|length }}</strong>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-tile">
+            <span class="text-muted small">Courses</span>
+            <strong>{{ courses|length }}</strong>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-tile">
+            <span class="text-muted small">Enrollments</span>
+            <strong>{{ enrollments|length }}</strong>
+        </div>
+    </div>
+</div>
+
+<section class="mb-4">
+    <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+        <h2 class="h4 mb-0">Courses</h2>
+        <a class="btn btn-sm btn-primary" href="{{ url_for('admin.create_course') }}">New Course</a>
+    </div>
+    {% if courses %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Course</th>
+                        <th scope="col">Instructor</th>
+                        <th scope="col">Level</th>
+                        <th scope="col">Lessons</th>
+                        <th scope="col">Students</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                        <tr>
+                            <td><a class="fw-semibold" href="{{ url_for('courses.detail', course_id=course.course_id) }}">{{ course.title }}</a></td>
+                            <td>{{ course.instructor.name }}</td>
+                            <td>{{ course.level }}</td>
+                            <td>{{ course.lessons|length }}</td>
+                            <td>{{ course.student_count }}</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.create_lesson', course_id=course.course_id) }}">Add Lesson</a>
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.edit_course', course_id=course.course_id) }}">Edit</a>
+                                <form method="post" action="{{ url_for('admin.delete_course', course_id=course.course_id) }}" class="d-inline" onsubmit="return confirm('Delete this course and all related records?');">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p class="text-muted mb-0">No courses yet.</p>
+        </div>
+    {% endif %}
+</section>
+
+<section class="mb-4">
+    <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+        <h2 class="h4 mb-0">Users</h2>
+        <a class="btn btn-sm btn-primary" href="{{ url_for('admin.create_user') }}">New User</a>
+    </div>
+    {% if users %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Joined</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td><span class="badge text-bg-secondary">{{ user.role }}</span></td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.edit_user', user_id=user.user_id) }}">Edit</a>
+                                <form method="post" action="{{ url_for('admin.delete_user', user_id=user.user_id) }}" class="d-inline" onsubmit="return confirm('Delete this user and related records?');">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p class="text-muted mb-0">No users yet.</p>
+        </div>
+    {% endif %}
+</section>
+
+<section>
+    <h2 class="h4 mb-3">Enrollments</h2>
+    {% if enrollments %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Student</th>
+                        <th scope="col">Course</th>
+                        <th scope="col">Progress</th>
+                        <th scope="col">Status</th>
+                        <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                        <tr>
+                            <td>{{ enrollment.student.name }}</td>
+                            <td>{{ enrollment.course.title }}</td>
+                            <td>{{ enrollment.progress_percent }}%</td>
+                            <td>
+                                <form method="post" action="{{ url_for('admin.update_enrollment_status', enrollment_id=enrollment.enrollment_id) }}" class="d-flex gap-2">
+                                    <select name="status" class="form-select form-select-sm enrollment-status-select">
+                                        <option value="active" {% if enrollment.status == 'active' %}selected{% endif %}>active</option>
+                                        <option value="completed" {% if enrollment.status == 'completed' %}selected{% endif %}>completed</option>
+                                        <option value="dropped" {% if enrollment.status == 'dropped' %}selected{% endif %}>dropped</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-outline-primary" type="submit">Save</button>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <form method="post" action="{{ url_for('admin.delete_enrollment', enrollment_id=enrollment.enrollment_id) }}" class="d-inline" onsubmit="return confirm('Delete this enrollment?');">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p class="text-muted mb-0">No enrollments yet.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>CourseHub</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg: var(--tg-theme-bg-color, #f4f7fb);
+            --surface: var(--tg-theme-secondary-bg-color, #ffffff);
+            --text: var(--tg-theme-text-color, #172033);
+            --hint: var(--tg-theme-hint-color, #64748b);
+            --button: var(--tg-theme-button-color, #0f766e);
+            --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --line: rgba(100, 116, 139, 0.22);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(circle at 18% 0%, rgba(15, 118, 110, 0.18), transparent 34%),
+                linear-gradient(180deg, rgba(217, 119, 6, 0.08), transparent 42%),
+                var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .shell {
+            width: min(100%, 460px);
+            min-height: 100vh;
+            margin: 0 auto;
+            display: grid;
+            align-content: center;
+            gap: 18px;
+            padding: max(28px, env(safe-area-inset-top)) 18px max(28px, env(safe-area-inset-bottom));
+        }
+
+        .brand {
+            display: grid;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .mark {
+            width: 62px;
+            height: 62px;
+            margin: 0 auto;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #0f766e, #d97706);
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 800;
+            box-shadow: 0 18px 36px rgba(15, 118, 110, 0.22);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+            line-height: 1.1;
+            letter-spacing: 0;
+        }
+
+        p {
+            margin: 0;
+            color: var(--hint);
+            line-height: 1.55;
+        }
+
+        .panel {
+            display: grid;
+            gap: 16px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: color-mix(in srgb, var(--surface) 94%, transparent);
+            box-shadow: 0 18px 42px rgba(23, 32, 51, 0.12);
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 38px;
+        }
+
+        .loader {
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(100, 116, 139, 0.25);
+            border-top-color: var(--button);
+            border-radius: 50%;
+            animation: spin 900ms linear infinite;
+            flex: 0 0 auto;
+        }
+
+        .status-copy {
+            text-align: left;
+        }
+
+        .status-copy strong {
+            display: block;
+            margin-bottom: 2px;
+            font-size: 15px;
+        }
+
+        .fallback {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 18px;
+            border-radius: 8px;
+            background: var(--button);
+            color: var(--button-text);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .fallback[hidden] {
+            display: none;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .step {
+            min-height: 62px;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: color-mix(in srgb, var(--surface) 86%, transparent);
+        }
+
+        .step span {
+            display: block;
+            color: var(--button);
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .step small {
+            color: var(--hint);
+            font-size: 12px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="brand" aria-label="CourseHub">
+            <div class="mark">CH</div>
+            <h1>CourseHub</h1>
+            <p>Telegram learning workspace for courses, progress, and quick practice.</p>
+        </section>
+
+        <section class="panel" aria-live="polite">
+            <div class="status-row">
+                <div class="loader" id="loader" aria-hidden="true"></div>
+                <div class="status-copy">
+                    <strong id="status-title">Connecting securely</strong>
+                    <p id="status">Checking your Telegram session...</p>
+                </div>
+            </div>
+            <a class="fallback" id="fallback" href="{{ url_for('courses.index') }}" hidden>Open course catalog</a>
+        </section>
+
+        <section class="steps" aria-label="CourseHub features">
+            <div class="step">
+                <span>01</span>
+                <small>Choose courses</small>
+            </div>
+            <div class="step">
+                <span>02</span>
+                <small>Track lessons</small>
+            </div>
+            <div class="step">
+                <span>03</span>
+                <small>Keep progress</small>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const status = document.querySelector("#status");
+            const statusTitle = document.querySelector("#status-title");
+            const fallback = document.querySelector("#fallback");
+            const loader = document.querySelector("#loader");
+            const telegram = window.Telegram && window.Telegram.WebApp;
+
+            const showFallback = (title, message) => {
+                statusTitle.textContent = title;
+                status.textContent = message;
+                fallback.hidden = false;
+                loader.hidden = true;
+            };
+
+            if (!telegram || !telegram.initData) {
+                showFallback("Telegram session needed", "Open this page from the CourseHub bot to sign in automatically.");
+                return;
+            }
+
+            telegram.ready();
+            telegram.expand();
+            telegram.setHeaderColor && telegram.setHeaderColor("secondary_bg_color");
+            telegram.MainButton && telegram.MainButton.hide();
+
+            fetch("{{ url_for('telegram_webapp.auth') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ initData: telegram.initData })
+            })
+                .then((response) => response.json().then((payload) => ({ ok: response.ok, payload })))
+                .then(({ ok, payload }) => {
+                    if (!ok) {
+                        showFallback("Login failed", payload.error || "Telegram login failed.");
+                        return;
+                    }
+                    statusTitle.textContent = "Welcome back";
+                    status.textContent = "Opening your learning dashboard...";
+                    window.location.replace(payload.redirectUrl);
+                })
+                .catch(() => {
+                    showFallback("Network issue", "Telegram login failed. Try again in a moment.");
+                });
+        })();
+    </script>
+</body>
+</html>

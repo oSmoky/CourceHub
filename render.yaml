@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: coursehub-web
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: python scripts/init_db.py && python scripts/seed.py && gunicorn run:app
+    healthCheckPath: /health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: coursehub-db
+          property: connectionString
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+
+  - type: worker
+    name: coursehub-bot
+    runtime: python
+    plan: starter
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m bot.main
+    envVars:
+      - key: SECRET_KEY
+        fromService:
+          name: coursehub-web
+          type: web
+          envVarKey: SECRET_KEY
+      - key: DATABASE_URL
+        fromDatabase:
+          name: coursehub-db
+          property: connectionString
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: PUBLIC_BASE_URL
+        fromService:
+          name: coursehub-web
+          type: web
+          property: host
+
+databases:
+  - name: coursehub-db
+    region: frankfurt
+    databaseName: coursehub
+    user: coursehub

@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: coursehub
+      POSTGRES_USER: coursehub
+      POSTGRES_PASSWORD: coursehub
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coursehub -d coursehub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:8000 run:app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://coursehub:coursehub@db:5432/coursehub
+      SECRET_KEY: ${SECRET_KEY:-change-this-secret}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      TELEGRAM_WEB_APP_URL: ${TELEGRAM_WEB_APP_URL:-}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  bot:
+    build: .
+    command: python -m bot.main
+    environment:
+      DATABASE_URL: postgresql+psycopg://coursehub:coursehub@db:5432/coursehub
+      SECRET_KEY: ${SECRET_KEY:-change-this-secret}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      TELEGRAM_WEB_APP_URL: ${TELEGRAM_WEB_APP_URL:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      web:
+        condition: service_started
+
+volumes:
+  postgres_data:

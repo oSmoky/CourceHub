@@ -1,0 +1,51 @@
+erDiagram
+    USERS ||--o{ COURSES : creates
+    USERS ||--o{ ENROLLMENTS : joins
+    COURSES ||--o{ LESSONS : contains
+    COURSES ||--o{ ENROLLMENTS : has
+    ENROLLMENTS ||--o{ PROGRESS : tracks
+    LESSONS ||--o{ PROGRESS : completed_in
+
+    USERS {
+        int user_id PK
+        varchar name
+        varchar email UK
+        varchar password_hash
+        varchar role
+        timestamp created_at
+    }
+
+    COURSES {
+        int course_id PK
+        int instructor_id FK
+        varchar title
+        text description
+        varchar level
+        timestamp created_at
+    }
+
+    LESSONS {
+        int lesson_id PK
+        int course_id FK
+        varchar title
+        text video_url
+        int display_order
+        int duration_min
+    }
+
+    ENROLLMENTS {
+        int enrollment_id PK
+        int user_id FK
+        int course_id FK
+        date enrollment_date
+        varchar status
+    }
+
+    PROGRESS {
+        int progress_id PK
+        int enrollment_id FK
+        int lesson_id FK
+        boolean is_completed
+        date completion_date
+    }
+

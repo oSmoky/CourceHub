@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>CourseHub</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            color-scheme: light dark;
+            --bg: var(--tg-theme-bg-color, #f3f6f8);
+            --surface: var(--tg-theme-secondary-bg-color, #ffffff);
+            --text: var(--tg-theme-text-color, #172033);
+            --hint: var(--tg-theme-hint-color, #64748b);
+            --button: var(--tg-theme-button-color, #0f766e);
+            --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --accent: #d97706;
+            --ok: #16a34a;
+            --line: rgba(100, 116, 139, 0.22);
+            --shadow: 0 14px 34px rgba(23, 32, 51, 0.10);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                linear-gradient(180deg, rgba(15, 118, 110, 0.10), transparent 260px),
+                var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        .app-shell {
+            width: min(100%, 520px);
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: max(16px, env(safe-area-inset-top)) 14px calc(92px + env(safe-area-inset-bottom));
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .identity {
+            min-width: 0;
+        }
+
+        .eyebrow {
+            margin: 0 0 3px;
+            color: var(--hint);
+            font-size: 13px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 26px;
+            line-height: 1.1;
+            letter-spacing: 0;
+        }
+
+        .avatar {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--button), var(--accent));
+            color: #ffffff;
+            font-weight: 800;
+            flex: 0 0 auto;
+            box-shadow: 0 12px 24px rgba(15, 118, 110, 0.20);
+        }
+
+        .hero {
+            display: grid;
+            gap: 14px;
+            padding: 16px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .hero-main {
+            display: grid;
+            grid-template-columns: 112px 1fr;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .progress-ring {
+            width: 112px;
+            aspect-ratio: 1;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle closest-side, var(--surface) 72%, transparent 73%),
+                conic-gradient(var(--button) var(--value), rgba(100, 116, 139, 0.18) 0);
+        }
+
+        .progress-ring strong {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .hero h2 {
+            margin: 0 0 6px;
+            font-size: 18px;
+            letter-spacing: 0;
+        }
+
+        .hero p,
+        .card p,
+        .profile-item span {
+            margin: 0;
+            color: var(--hint);
+            line-height: 1.45;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .stat {
+            min-height: 64px;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: color-mix(in srgb, var(--surface) 86%, var(--bg));
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .stat span {
+            display: block;
+            margin-top: 5px;
+            color: var(--hint);
+            font-size: 12px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: grid;
+            gap: 12px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 4px 0 2px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 18px;
+            letter-spacing: 0;
+        }
+
+        .section-title span {
+            color: var(--hint);
+            font-size: 13px;
+        }
+
+        .card {
+            display: grid;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            box-shadow: 0 8px 20px rgba(23, 32, 51, 0.06);
+        }
+
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 17px;
+            letter-spacing: 0;
+        }
+
+        .badge {
+            align-self: start;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            padding: 4px 8px;
+            color: var(--button);
+            background: color-mix(in srgb, var(--button) 10%, var(--surface));
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            color: var(--hint);
+            font-size: 13px;
+        }
+
+        .bar {
+            height: 10px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(100, 116, 139, 0.18);
+        }
+
+        .bar span {
+            display: block;
+            height: 100%;
+            width: var(--value);
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--button), var(--accent));
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn,
+        .ghost-btn,
+        .tab-btn {
+            min-height: 44px;
+            border-radius: 8px;
+            border: 0;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 750;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            background: var(--button);
+            color: var(--button-text);
+        }
+
+        .ghost-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            border: 1px solid var(--line);
+            background: transparent;
+            color: var(--text);
+        }
+
+        .empty {
+            padding: 18px;
+            border: 1px dashed var(--line);
+            border-radius: 8px;
+            color: var(--hint);
+            text-align: center;
+        }
+
+        .profile-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .profile-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .bottom-tabs {
+            position: fixed;
+            left: 50%;
+            bottom: 0;
+            width: min(100%, 520px);
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+            border-top: 1px solid var(--line);
+            background: color-mix(in srgb, var(--surface) 94%, transparent);
+            backdrop-filter: blur(18px);
+        }
+
+        .tab-btn {
+            display: grid;
+            place-items: center;
+            gap: 2px;
+            padding: 7px 4px;
+            background: transparent;
+            color: var(--hint);
+            font-size: 12px;
+        }
+
+        .tab-btn strong {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .tab-btn.active {
+            background: color-mix(in srgb, var(--button) 12%, transparent);
+            color: var(--button);
+        }
+
+        @media (max-width: 380px) {
+            .hero-main {
+                grid-template-columns: 92px 1fr;
+            }
+
+            .progress-ring {
+                width: 92px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% set overall_progress = ((completed_lessons / total_lessons) * 100)|round|int if total_lessons else 0 %}
+    <main class="app-shell">
+        <header class="topbar">
+            <div class="identity">
+                <p class="eyebrow">CourseHub WebView</p>
+                <h1>Hi, {{ current_user.name }}</h1>
+            </div>
+            <div class="avatar" aria-hidden="true">{{ current_user.name[:1] }}</div>
+        </header>
+
+        <section class="hero">
+            <div class="hero-main">
+                <div class="progress-ring" style="--value: {{ overall_progress }}%">
+                    <strong>{{ overall_progress }}%</strong>
+                </div>
+                <div>
+                    <h2>Your learning pulse</h2>
+                    <p>{{ completed_lessons }} of {{ total_lessons }} assigned lessons completed across your active courses.</p>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <strong>{{ enrollments|length }}</strong>
+                    <span>My courses</span>
+                </div>
+                <div class="stat">
+                    <strong>{{ courses|length }}</strong>
+                    <span>Catalog</span>
+                </div>
+                <div class="stat">
+                    <strong>{{ completed_lessons }}</strong>
+                    <span>Done</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="tab-panel active" id="learning-panel">
+            <div class="section-title">
+                <h2>My Learning</h2>
+                <span>{{ enrollments|length }} active</span>
+            </div>
+            {% if enrollments %}
+                {% for enrollment in enrollments %}
+                    <article class="card">
+                        <div class="card-head">
+                            <div>
+                                <h3>{{ enrollment.course.title }}</h3>
+                                <p>{{ enrollment.course.instructor.name }}</p>
+                            </div>
+                            <span class="badge">{{ enrollment.status }}</span>
+                        </div>
+                        <div class="meta">
+                            <span>{{ enrollment.course.level }}</span>
+                            <span>{{ enrollment.course.lessons|length }} lessons</span>
+                            <span>{{ enrollment.progress_percent }}% complete</span>
+                        </div>
+                        <div class="bar" aria-label="{{ enrollment.progress_percent }} percent complete">
+                            <span style="--value: {{ enrollment.progress_percent }}%"></span>
+                        </div>
+                        <div class="actions">
+                            <a class="btn" href="{{ url_for('student.learn', enrollment_id=enrollment.enrollment_id) }}">Continue</a>
+                            <a class="ghost-btn" href="{{ url_for('courses.detail', course_id=enrollment.course_id) }}">Details</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <div class="empty">No enrollments yet. Open the catalog tab and choose a course.</div>
+            {% endif %}
+        </section>
+
+        <section class="tab-panel" id="courses-panel">
+            <div class="section-title">
+                <h2>Catalog</h2>
+                <span>{{ courses|length }} courses</span>
+            </div>
+            {% for course in courses %}
+                {% set enrollment = enrollment_by_course.get(course.course_id) %}
+                <article class="card">
+                    <div class="card-head">
+                        <div>
+                            <h3>{{ course.title }}</h3>
+                            <p>{{ course.instructor.name }}</p>
+                        </div>
+                        <span class="badge">{{ course.level }}</span>
+                    </div>
+                    <p>{{ course.description }}</p>
+                    <div class="meta">
+                        <span>{{ course.lessons|length }} lessons</span>
+                        <span>{{ course.student_count }} students</span>
+                    </div>
+                    {% if enrollment %}
+                        <div class="bar" aria-label="{{ enrollment.progress_percent }} percent complete">
+                            <span style="--value: {{ enrollment.progress_percent }}%"></span>
+                        </div>
+                        <div class="actions">
+                            <a class="btn" href="{{ url_for('student.learn', enrollment_id=enrollment.enrollment_id) }}">Continue</a>
+                            <a class="ghost-btn" href="{{ url_for('courses.detail', course_id=course.course_id) }}">Details</a>
+                        </div>
+                    {% else %}
+                        <form method="post" action="{{ url_for('telegram_webapp.enroll_course', course_id=course.course_id) }}">
+                            <button class="btn" type="submit">Enroll</button>
+                        </form>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </section>
+
+        <section class="tab-panel" id="profile-panel">
+            <div class="section-title">
+                <h2>Profile</h2>
+                <span>{{ current_user.role }}</span>
+            </div>
+            <div class="profile-list">
+                <div class="profile-item">
+                    <strong>Name</strong>
+                    <span>{{ current_user.name }}</span>
+                </div>
+                <div class="profile-item">
+                    <strong>Email</strong>
+                    <span>{{ current_user.email }}</span>
+                </div>
+                <div class="profile-item">
+                    <strong>Courses</strong>
+                    <span>{{ enrollments|length }}</span>
+                </div>
+                <div class="profile-item">
+                    <strong>Lessons done</strong>
+                    <span>{{ completed_lessons }}</span>
+                </div>
+            </div>
+            <a class="ghost-btn" href="{{ url_for('auth.logout') }}">Logout</a>
+        </section>
+    </main>
+
+    <nav class="bottom-tabs" aria-label="WebView tabs">
+        <button class="tab-btn active" type="button" data-tab="learning">
+            <strong>01</strong>
+            Learning
+        </button>
+        <button class="tab-btn" type="button" data-tab="courses">
+            <strong>02</strong>
+            Courses
+        </button>
+        <button class="tab-btn" type="button" data-tab="profile">
+            <strong>03</strong>
+            Profile
+        </button>
+    </nav>
+
+    <script>
+        (() => {
+            const telegram = window.Telegram && window.Telegram.WebApp;
+            if (telegram) {
+                telegram.ready();
+                telegram.expand();
+                telegram.setHeaderColor && telegram.setHeaderColor("secondary_bg_color");
+                telegram.MainButton && telegram.MainButton.hide();
+                telegram.BackButton && telegram.BackButton.hide();
+            }
+
+            const panels = {
+                learning: document.querySelector("#learning-panel"),
+                courses: document.querySelector("#courses-panel"),
+                profile: document.querySelector("#profile-panel")
+            };
+            const tabs = Array.from(document.querySelectorAll(".tab-btn"));
+
+            const setTab = (name) => {
+                Object.entries(panels).forEach(([key, panel]) => {
+                    panel.classList.toggle("active", key === name);
+                });
+                tabs.forEach((tab) => {
+                    tab.classList.toggle("active", tab.dataset.tab === name);
+                });
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                telegram && telegram.HapticFeedback && telegram.HapticFeedback.selectionChanged();
+            };
+
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => setTab(tab.dataset.tab));
+            });
+        })();
+    </script>
+</body>
+</html>

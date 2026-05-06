@@ -1,0 +1,29 @@
+flowchart LR
+    Instructor[Instructor]
+    Student[Student]
+    System[CourseHub Platform]
+
+    Instructor --> UC1[Register and Login]
+    Instructor --> UC2[Create Course]
+    Instructor --> UC3[Update Course]
+    Instructor --> UC4[Delete Course]
+    Instructor --> UC5[Manage Lessons]
+
+    Student --> UC1
+    Student --> UC6[Browse Courses]
+    Student --> UC7[Enroll in Course]
+    Student --> UC8[Access Lessons]
+    Student --> UC9[Mark Lesson Completed]
+    Student --> UC10[View Progress]
+
+    UC1 --> System
+    UC2 --> System
+    UC3 --> System
+    UC4 --> System
+    UC5 --> System
+    UC6 --> System
+    UC7 --> System
+    UC8 --> System
+    UC9 --> System
+    UC10 --> System
+

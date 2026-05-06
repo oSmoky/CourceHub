@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}{{ enrollment.course.title }} - CourseHub{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a class="text-decoration-none small" href="{{ url_for('student.dashboard') }}">Back to My Learning</a>
+    <h1 class="h2 mt-2 mb-2">{{ enrollment.course.title }}</h1>
+    <div class="course-meta small mb-3">
+        <span>{{ enrollment.course.lessons|length }} lessons</span>
+        <span>{{ enrollment.status }}</span>
+    </div>
+    <div class="progress" role="progressbar" aria-valuenow="{{ enrollment.progress_percent }}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ enrollment.progress_percent }}%">{{ enrollment.progress_percent }}%</div>
+    </div>
+</div>
+
+{% if enrollment.course.lessons %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Order</th>
+                    <th scope="col">Lesson</th>
+                    <th scope="col">Duration</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lesson in enrollment.course.lessons %}
+                    {% set progress = progress_by_lesson[lesson.lesson_id] %}
+                    <tr>
+                        <td>{{ lesson.display_order }}</td>
+                        <td>
+                            <a href="{{ lesson.video_url }}" target="_blank" rel="noopener">{{ lesson.title }}</a>
+                        </td>
+                        <td>{{ lesson.duration_min }} min</td>
+                        <td>
+                            {% if progress.is_completed %}
+                                <span class="badge text-bg-success">Completed</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">In Progress</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <form method="post" action="{{ url_for('student.toggle_progress', progress_id=progress.progress_id) }}">
+                                <button class="btn btn-sm {% if progress.is_completed %}btn-outline-secondary{% else %}btn-primary{% endif %}" type="submit">
+                                    {% if progress.is_completed %}Mark Not Completed{% else %}Mark Completed{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p class="text-muted mb-0">This course has no lessons yet.</p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{% if lesson %}Edit Lesson{% else %}New Lesson{% endif %} - CourseHub{% endblock %}
+
+{% block content %}
+<div class="content-shell">
+    <h1 class="h3 mb-1">{% if lesson %}Edit Lesson{% else %}New Lesson{% endif %}</h1>
+    <p class="text-muted mb-3">{{ course.title }}</p>
+    <form method="post" class="form-panel">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input id="title" name="title" class="form-control" value="{{ lesson.title if lesson else '' }}" required maxlength="150">
+        </div>
+        <div class="mb-3">
+            <label for="video_url" class="form-label">Video URL</label>
+            <input id="video_url" name="video_url" type="url" class="form-control" value="{{ lesson.video_url if lesson else '' }}" required>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="display_order" class="form-label">Display Order</label>
+                <input id="display_order" name="display_order" type="number" min="1" class="form-control" value="{{ lesson.display_order if lesson else (course.lessons|length + 1) }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="duration_min" class="form-label">Duration Minutes</label>
+                <input id="duration_min" name="duration_min" type="number" min="0" class="form-control" value="{{ lesson.duration_min if lesson else 0 }}" required>
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn btn-outline-secondary" href="{{ url_for('courses.detail', course_id=course.course_id) }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

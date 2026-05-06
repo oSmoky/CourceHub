@@ -1,0 +1,15 @@
+sequenceDiagram
+    actor Student
+    participant Web as Flask Web App
+    participant DB as PostgreSQL
+
+    Student->>Web: Open enrolled course
+    Web->>DB: Read lessons and progress
+    DB-->>Web: Progress records
+    Web-->>Student: Display completion percentage
+    Student->>Web: Mark lesson completed
+    Web->>DB: Update progress.is_completed
+    Web->>DB: Update enrollment status when complete
+    DB-->>Web: Commit transaction
+    Web-->>Student: Display updated percentage
+

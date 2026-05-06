@@ -1,0 +1,12 @@
+.env
+.runtime/
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+instance/
+*.pyc
+*.sqlite
+*.sqlite3
+.coverage
+htmlcov/

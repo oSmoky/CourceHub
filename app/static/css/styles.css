@@ -1,0 +1,160 @@
+:root {
+    --app-bg: #f5f7f2;
+    --app-surface: #ffffff;
+    --app-border: #d8e0d6;
+    --app-primary: #0f766e;
+    --app-primary-dark: #115e59;
+    --app-accent: #d97706;
+    --app-text: #172033;
+    --app-muted: #647268;
+    --bs-primary: var(--app-primary);
+    --bs-primary-rgb: 15, 118, 110;
+}
+
+body {
+    background:
+        linear-gradient(180deg, rgba(15, 118, 110, 0.08), rgba(245, 247, 242, 0) 220px),
+        var(--tg-theme-bg-color, var(--app-bg));
+    color: var(--tg-theme-text-color, var(--app-text));
+}
+
+.app-navbar {
+    background: linear-gradient(90deg, var(--app-primary-dark), var(--app-primary));
+    box-shadow: 0 2px 16px rgba(15, 23, 42, 0.16);
+}
+
+.app-main {
+    max-width: 1120px;
+}
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.auth-shell,
+.content-shell {
+    max-width: 720px;
+}
+
+.form-panel,
+.empty-state,
+.stat-tile {
+    background: var(--tg-theme-secondary-bg-color, var(--app-surface));
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+}
+
+.stat-tile {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.stat-tile strong {
+    color: var(--app-primary-dark);
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.enrollment-status-select {
+    min-width: 8.5rem;
+}
+
+.course-card {
+    background: var(--tg-theme-secondary-bg-color, var(--app-surface));
+    border-color: var(--app-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.course-card:hover {
+    box-shadow: 0 14px 34px rgba(23, 32, 51, 0.1);
+    transform: translateY(-2px);
+}
+
+.course-meta {
+    color: var(--app-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+}
+
+.course-meta span {
+    white-space: nowrap;
+}
+
+.table {
+    background: var(--tg-theme-secondary-bg-color, var(--app-surface));
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+}
+
+.progress {
+    height: 1.25rem;
+    background-color: #dce7df;
+}
+
+.progress-bar {
+    min-width: 2.5rem;
+    background: linear-gradient(90deg, var(--app-primary), var(--app-accent));
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--app-primary);
+    --bs-btn-border-color: var(--app-primary);
+    --bs-btn-hover-bg: var(--app-primary-dark);
+    --bs-btn-hover-border-color: var(--app-primary-dark);
+    --bs-btn-active-bg: var(--app-primary-dark);
+    --bs-btn-active-border-color: var(--app-primary-dark);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--app-primary);
+    --bs-btn-border-color: var(--app-primary);
+    --bs-btn-hover-bg: var(--app-primary);
+    --bs-btn-hover-border-color: var(--app-primary);
+}
+
+.badge.text-bg-secondary {
+    background-color: #51665f !important;
+}
+
+.badge.text-bg-info {
+    background-color: #e0f2fe !important;
+    color: #075985 !important;
+}
+
+html.telegram-webapp body {
+    background: var(--tg-theme-bg-color, var(--app-bg));
+}
+
+@media (max-width: 575.98px) {
+    .app-main {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .page-header {
+        align-items: stretch;
+    }
+
+    .page-header .btn,
+    .course-card .btn,
+    .course-card form,
+    .course-card button {
+        width: 100%;
+    }
+
+    .table {
+        font-size: 0.92rem;
+    }
+}

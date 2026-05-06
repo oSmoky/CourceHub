@@ -1,0 +1,15 @@
+sequenceDiagram
+    actor Student
+    participant Web as Flask Web App
+    participant DB as PostgreSQL
+
+    Student->>Web: Open course detail page
+    Web->>DB: Read course and lessons
+    DB-->>Web: Course data
+    Web-->>Student: Display course details
+    Student->>Web: Click Enroll
+    Web->>DB: Insert enrollment
+    Web->>DB: Insert progress rows for lessons
+    DB-->>Web: Commit transaction
+    Web-->>Student: Show learning page
+

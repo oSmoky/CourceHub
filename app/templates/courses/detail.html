@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }} - CourseHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <span class="badge text-bg-secondary mb-2">{{ course.level }}</span>
+        <h1 class="h2 mb-2">{{ course.title }}</h1>
+        <p class="text-muted mb-1">Instructor: {{ course.instructor.name }} - {{ course.lessons|length }} lessons - {{ course.student_count }} students</p>
+        <p class="mb-0">{{ course.description }}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        {% if current_user and current_user.is_admin %}
+            <a class="btn btn-outline-primary" href="{{ url_for('admin.edit_course', course_id=course.course_id) }}">Edit Course</a>
+            <a class="btn btn-primary" href="{{ url_for('admin.create_lesson', course_id=course.course_id) }}">Add Lesson</a>
+            <a class="btn btn-outline-secondary" href="{{ url_for('admin.dashboard') }}">Admin Panel</a>
+        {% elif current_user and current_user.is_instructor and current_user.user_id == course.instructor_id %}
+            <a class="btn btn-outline-primary" href="{{ url_for('instructor.edit_course', course_id=course.course_id) }}">Edit Course</a>
+            <a class="btn btn-primary" href="{{ url_for('instructor.create_lesson', course_id=course.course_id) }}">Add Lesson</a>
+        {% elif current_user and current_user.is_student %}
+            {% if enrollment %}
+                <a class="btn btn-primary" href="{{ url_for('student.learn', enrollment_id=enrollment.enrollment_id) }}">Continue Learning</a>
+            {% else %}
+                <form method="post" action="{{ url_for('student.enroll', course_id=course.course_id) }}">
+                    <button class="btn btn-primary" type="submit">Enroll</button>
+                </form>
+            {% endif %}
+        {% elif not current_user %}
+            <a class="btn btn-primary" href="{{ url_for('auth.login') }}">Login to Enroll</a>
+        {% endif %}
+    </div>
+</div>
+
+<section>
+    <h2 class="h4 mb-3">Lessons</h2>
+    {% if course.lessons %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Order</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Media</th>
+                        {% if current_user and (current_user.is_admin or (current_user.is_instructor and current_user.user_id == course.instructor_id)) %}
+                            <th scope="col" class="text-end">Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lesson in course.lessons %}
+                        <tr>
+                            <td>{{ lesson.display_order }}</td>
+                            <td>{{ lesson.title }}</td>
+                            <td>{{ lesson.duration_min }} min</td>
+                            <td><a href="{{ lesson.video_url }}" target="_blank" rel="noopener">Open</a></td>
+                            {% if current_user and current_user.is_admin %}
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.edit_lesson', lesson_id=lesson.lesson_id) }}">Edit</a>
+                                    <form method="post" action="{{ url_for('admin.delete_lesson', lesson_id=lesson.lesson_id) }}" class="d-inline" onsubmit="return confirm('Delete this lesson?');">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            {% elif current_user and current_user.is_instructor and current_user.user_id == course.instructor_id %}
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('instructor.edit_lesson', lesson_id=lesson.lesson_id) }}">Edit</a>
+                                    <form method="post" action="{{ url_for('instructor.delete_lesson', lesson_id=lesson.lesson_id) }}" class="d-inline" onsubmit="return confirm('Delete this lesson?');">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p class="text-muted mb-0">No lessons have been added to this course yet.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}
