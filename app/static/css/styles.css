@@ -1,64 +1,176 @@
 :root {
-    --app-bg: #f5f7f2;
+    --app-bg: #f6f8fb;
     --app-surface: #ffffff;
-    --app-border: #d8e0d6;
+    --app-surface-soft: #eef6f5;
+    --app-border: #dbe4ea;
+    --app-border-strong: #c8d5dd;
     --app-primary: #0f766e;
     --app-primary-dark: #115e59;
+    --app-primary-soft: #dff4f1;
     --app-accent: #d97706;
+    --app-info: #0f6f9f;
     --app-text: #172033;
-    --app-muted: #647268;
+    --app-muted: #667789;
+    --app-shadow: 0 12px 32px rgba(23, 32, 51, 0.08);
+    --app-shadow-soft: 0 8px 20px rgba(23, 32, 51, 0.05);
     --bs-primary: var(--app-primary);
     --bs-primary-rgb: 15, 118, 110;
+    --bs-body-color: var(--app-text);
+    --bs-body-bg: var(--app-bg);
+    --bs-border-color: var(--app-border);
 }
 
 body {
+    min-height: 100vh;
     background:
-        linear-gradient(180deg, rgba(15, 118, 110, 0.08), rgba(245, 247, 242, 0) 220px),
+        linear-gradient(180deg, rgba(15, 118, 110, 0.09), rgba(246, 248, 251, 0) 260px),
+        radial-gradient(circle at 94% 4%, rgba(217, 119, 6, 0.08), transparent 280px),
         var(--tg-theme-bg-color, var(--app-bg));
     color: var(--tg-theme-text-color, var(--app-text));
 }
 
+a {
+    color: var(--app-primary);
+}
+
+a:hover {
+    color: var(--app-primary-dark);
+}
+
 .app-navbar {
-    background: linear-gradient(90deg, var(--app-primary-dark), var(--app-primary));
-    box-shadow: 0 2px 16px rgba(15, 23, 42, 0.16);
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid var(--app-border);
+    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+    backdrop-filter: blur(18px);
+}
+
+.navbar-brand {
+    align-items: center;
+    color: var(--app-text) !important;
+    display: inline-flex;
+    gap: 0.55rem;
+}
+
+.navbar-brand::before {
+    align-items: center;
+    background: linear-gradient(135deg, var(--app-primary), var(--app-accent));
+    border-radius: 8px;
+    color: #ffffff;
+    content: "CH";
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 800;
+    height: 2rem;
+    justify-content: center;
+    letter-spacing: 0;
+    width: 2rem;
+}
+
+.navbar .nav-link {
+    border-radius: 8px;
+    color: var(--app-muted);
+    font-weight: 650;
+    padding-left: 0.8rem !important;
+    padding-right: 0.8rem !important;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    background: var(--app-primary-soft);
+    color: var(--app-primary-dark);
+}
+
+.navbar-text {
+    background: #f1f5f9;
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    color: var(--app-muted) !important;
+    padding: 0.35rem 0.65rem;
 }
 
 .app-main {
-    max-width: 1120px;
+    max-width: 1180px;
+    padding-bottom: 3rem;
 }
 
-.page-header {
+.page-header,
+.dashboard-header {
+    align-items: end;
+    background: rgba(255, 255, 255, 0.74);
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    box-shadow: var(--app-shadow-soft);
     display: flex;
     flex-wrap: wrap;
-    align-items: end;
-    justify-content: space-between;
     gap: 1rem;
+    justify-content: space-between;
     margin-bottom: 1.5rem;
+    padding: 1.25rem;
+}
+
+.page-header h1,
+.dashboard-header h1 {
+    letter-spacing: 0;
 }
 
 .auth-shell,
 .content-shell {
-    max-width: 720px;
+    max-width: 760px;
 }
 
 .form-panel,
 .empty-state,
-.stat-tile {
+.stat-tile,
+.table,
+.course-card {
     background: var(--tg-theme-secondary-bg-color, var(--app-surface));
     border: 1px solid var(--app-border);
     border-radius: 8px;
-    padding: 1.25rem;
-    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+    box-shadow: var(--app-shadow-soft);
+}
+
+.form-panel {
+    padding: 1.35rem;
+}
+
+.form-label {
+    color: #314154;
+    font-weight: 700;
+}
+
+.form-control,
+.form-select {
+    border-color: var(--app-border-strong);
+    border-radius: 8px;
+    min-height: 2.75rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--app-primary);
+    box-shadow: 0 0 0 0.2rem rgba(15, 118, 110, 0.14);
+}
+
+.empty-state {
+    padding: 1.35rem;
 }
 
 .stat-tile {
     display: grid;
     gap: 0.35rem;
+    min-height: 6.25rem;
+    padding: 1.1rem;
+}
+
+.stat-tile span {
+    color: var(--app-muted) !important;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .stat-tile strong {
     color: var(--app-primary-dark);
-    font-size: 2rem;
+    font-size: 2.15rem;
     line-height: 1;
 }
 
@@ -67,15 +179,20 @@ body {
 }
 
 .course-card {
-    background: var(--tg-theme-secondary-bg-color, var(--app-surface));
-    border-color: var(--app-border);
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
-    transition: transform 160ms ease, box-shadow 160ms ease;
+    overflow: hidden;
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.course-card::before {
+    background: linear-gradient(90deg, var(--app-primary), var(--app-accent), var(--app-info));
+    content: "";
+    display: block;
+    height: 4px;
 }
 
 .course-card:hover {
-    box-shadow: 0 14px 34px rgba(23, 32, 51, 0.1);
+    border-color: rgba(15, 118, 110, 0.34);
+    box-shadow: var(--app-shadow);
     transform: translateY(-2px);
 }
 
@@ -83,29 +200,66 @@ body {
     color: var(--app-muted);
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem 0.75rem;
+    gap: 0.45rem;
 }
 
 .course-meta span {
+    background: #f1f5f9;
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    padding: 0.28rem 0.55rem;
     white-space: nowrap;
 }
 
 .table {
-    background: var(--tg-theme-secondary-bg-color, var(--app-surface));
-    border: 1px solid var(--app-border);
-    border-radius: 8px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 0;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+}
+
+.table-responsive {
+    border-radius: 8px;
+    box-shadow: var(--app-shadow-soft);
+}
+
+.table > :not(caption) > * > * {
+    border-bottom-color: var(--app-border);
+    padding: 0.9rem 1rem;
+}
+
+.table thead th {
+    background: #f8fafc;
+    color: #405066;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.table tbody tr:hover td {
+    background: #fbfdfd;
 }
 
 .progress {
-    height: 1.25rem;
-    background-color: #dce7df;
+    background-color: #e2eaf0;
+    border-radius: 999px;
+    height: 1.1rem;
+    overflow: hidden;
 }
 
 .progress-bar {
-    min-width: 2.5rem;
     background: linear-gradient(90deg, var(--app-primary), var(--app-accent));
+    min-width: 2.5rem;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 750;
+    min-height: 2.5rem;
+}
+
+.btn-sm {
+    min-height: 2.05rem;
 }
 
 .btn-primary {
@@ -115,22 +269,46 @@ body {
     --bs-btn-hover-border-color: var(--app-primary-dark);
     --bs-btn-active-bg: var(--app-primary-dark);
     --bs-btn-active-border-color: var(--app-primary-dark);
+    box-shadow: 0 8px 18px rgba(15, 118, 110, 0.18);
 }
 
 .btn-outline-primary {
     --bs-btn-color: var(--app-primary);
-    --bs-btn-border-color: var(--app-primary);
+    --bs-btn-border-color: rgba(15, 118, 110, 0.48);
     --bs-btn-hover-bg: var(--app-primary);
     --bs-btn-hover-border-color: var(--app-primary);
 }
 
+.btn-outline-secondary {
+    --bs-btn-color: #536174;
+    --bs-btn-border-color: var(--app-border-strong);
+    --bs-btn-hover-bg: #eef3f6;
+    --bs-btn-hover-border-color: var(--app-border-strong);
+    --bs-btn-hover-color: var(--app-text);
+}
+
+.badge {
+    border-radius: 8px;
+    padding: 0.42em 0.62em;
+}
+
 .badge.text-bg-secondary {
-    background-color: #51665f !important;
+    background-color: #edf2f7 !important;
+    color: #344256 !important;
 }
 
 .badge.text-bg-info {
     background-color: #e0f2fe !important;
     color: #075985 !important;
+}
+
+.badge.text-bg-success {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+}
+
+.alert {
+    border-radius: 8px;
 }
 
 html.telegram-webapp body {
@@ -143,11 +321,13 @@ html.telegram-webapp body {
         padding-right: 1rem;
     }
 
-    .page-header {
+    .page-header,
+    .dashboard-header {
         align-items: stretch;
     }
 
     .page-header .btn,
+    .dashboard-header .btn,
     .course-card .btn,
     .course-card form,
     .course-card button {

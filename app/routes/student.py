@@ -54,7 +54,17 @@ def enroll(course_id):
         db.session.commit()
         flash("Enrollment created.", "success")
 
-    return redirect(url_for("student.learn", enrollment_id=enrollment.enrollment_id))
+    return redirect(url_for("student.enrollment_confirmation", enrollment_id=enrollment.enrollment_id))
+
+
+@bp.route("/enrollments/<int:enrollment_id>/confirmed")
+@role_required("student")
+def enrollment_confirmation(enrollment_id):
+    enrollment = Enrollment.query.filter_by(
+        enrollment_id=enrollment_id,
+        user_id=g.user.user_id,
+    ).first_or_404()
+    return render_template("student/enrollment_confirmation.html", enrollment=enrollment)
 
 
 @bp.route("/enrollments/<int:enrollment_id>")

@@ -85,3 +85,9 @@ The full PostgreSQL schema is available in `database_schema.sql`, and the ER dia
 
 The final result is a working Flask web application prototype with PostgreSQL database design, role-based workflows, Bootstrap templates, and professional system documentation suitable for a database applications course.
 
+## 11. Screenshot Plan
+
+The report screenshots are listed in `figure_checklist.md`. The checklist
+includes the requested Figure 2 through Figure 10 items, plus Figure 1 for the
+course catalog overview and optional extra figures for the admin panel and
+Telegram WebView interface.
