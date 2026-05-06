@@ -6,7 +6,9 @@ CourseHub needs two long-running processes in production:
 - Bot worker: runs Telegram polling and handles commands/buttons.
 
 Use PostgreSQL in production. SQLite is fine for local demos, but it is not a
-good fit for a public multi-process deployment.
+good fit for a public multi-process deployment. If `DATABASE_URL` is missing on
+Render, CourseHub falls back to `/tmp/coursehub.sqlite` so the web demo can
+start, but that data is temporary and can reset on deploy/restart.
 
 ## Required Environment Variables
 
@@ -32,6 +34,22 @@ Build Command: pip install -r requirements.txt
 Start Command: python scripts/init_db.py && python scripts/seed.py && gunicorn --bind 0.0.0.0:$PORT run:app
 Health Check Path: /health
 ```
+
+If Render shows this error:
+
+```text
+connection to server at "127.0.0.1", port 5432 failed: Connection refused
+```
+
+`DATABASE_URL` is missing. Attach a Render PostgreSQL database to the web
+service and set:
+
+```text
+DATABASE_URL=<your Render PostgreSQL External Database URL or Internal Database URL>
+```
+
+The app can start with temporary SQLite if `DATABASE_URL` is empty, but the
+proper production setup is Render PostgreSQL.
 
 If Render shows this error:
 

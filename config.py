@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -7,10 +8,14 @@ load_dotenv()
 
 
 def _database_url():
-    url = os.getenv(
-        "DATABASE_URL",
-        "postgresql+psycopg://postgres:postgres@localhost:5432/coursehub",
-    )
+    url = os.getenv("DATABASE_URL", "").strip()
+    if not url:
+        if os.getenv("RENDER"):
+            return "sqlite:////tmp/coursehub.sqlite"
+        local_db = Path(__file__).resolve().parent / "instance" / "coursehub.sqlite"
+        local_db.parent.mkdir(exist_ok=True)
+        return f"sqlite:///{local_db.as_posix()}"
+
     if url.startswith("postgres://"):
         return "postgresql+psycopg://" + url[len("postgres://") :]
     if url.startswith("postgresql://"):
