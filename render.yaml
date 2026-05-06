@@ -5,7 +5,7 @@ services:
     plan: free
     region: frankfurt
     buildCommand: pip install -r requirements.txt
-    startCommand: python scripts/init_db.py && python scripts/seed.py && gunicorn run:app
+    startCommand: python scripts/init_db.py && python scripts/seed.py && gunicorn --bind 0.0.0.0:$PORT run:app
     healthCheckPath: /health
     envVars:
       - key: SECRET_KEY

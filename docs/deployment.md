@@ -29,7 +29,7 @@ Web service:
 
 ```text
 Build Command: pip install -r requirements.txt
-Start Command: python scripts/init_db.py && python scripts/seed.py && gunicorn run:app
+Start Command: python scripts/init_db.py && python scripts/seed.py && gunicorn --bind 0.0.0.0:$PORT run:app
 Health Check Path: /health
 ```
 
@@ -47,7 +47,7 @@ Service Type: Web Service
 Runtime: Python 3
 Root Directory: leave empty
 Build Command: pip install -r requirements.txt
-Start Command: python scripts/init_db.py && python scripts/seed.py && gunicorn run:app
+Start Command: python scripts/init_db.py && python scripts/seed.py && gunicorn --bind 0.0.0.0:$PORT run:app
 Health Check Path: /health
 ```
 
@@ -94,6 +94,9 @@ Worker service:
 Build Command: pip install -r requirements.txt
 Start Command: python -m bot.main
 ```
+
+Set `TELEGRAM_BOT_TOKEN` on both the web service and the worker. The worker
+exits with status 1 if the token is empty.
 
 The Render blueprint runs database initialization and seed data before starting
 the web service. If you deploy manually, run this once after the database is
