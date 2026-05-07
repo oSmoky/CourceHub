@@ -10,6 +10,10 @@ load_dotenv()
 DEFAULT_RENDER_PUBLIC_BASE_URL = "https://courcehub.onrender.com"
 DEFAULT_TELEGRAM_WEB_APP_URL = f"{DEFAULT_RENDER_PUBLIC_BASE_URL}/telegram/"
 DEFAULT_TELEGRAM_BOT_TOKEN = "8740701480:AAHV9akw5_rj0wxs8jVHRXVGo18Sa3XEJEM"
+DEFAULT_TELEGRAM_WEBHOOK_SECRET = "coursehub-platform-webhook"
+DEFAULT_TELEGRAM_WEBHOOK_URL = (
+    f"{DEFAULT_RENDER_PUBLIC_BASE_URL}/telegram/webhook/{DEFAULT_TELEGRAM_WEBHOOK_SECRET}"
+)
 
 
 def _env_value(key):
@@ -36,6 +40,14 @@ def _telegram_web_app_url():
     return _env_value("TELEGRAM_WEB_APP_URL") or _render_default(DEFAULT_TELEGRAM_WEB_APP_URL)
 
 
+def _telegram_webhook_secret():
+    return _env_value("TELEGRAM_WEBHOOK_SECRET") or _render_default(DEFAULT_TELEGRAM_WEBHOOK_SECRET)
+
+
+def _telegram_webhook_url():
+    return _env_value("TELEGRAM_WEBHOOK_URL") or _render_default(DEFAULT_TELEGRAM_WEBHOOK_URL)
+
+
 def _database_url():
     url = _env_value("DATABASE_URL")
     if not url:
@@ -59,3 +71,5 @@ class Config:
     TELEGRAM_BOT_TOKEN = _telegram_bot_token()
     PUBLIC_BASE_URL = _public_base_url()
     TELEGRAM_WEB_APP_URL = _telegram_web_app_url()
+    TELEGRAM_WEBHOOK_SECRET = _telegram_webhook_secret()
+    TELEGRAM_WEBHOOK_URL = _telegram_webhook_url()
