@@ -51,6 +51,9 @@ def _migrate_sqlite_user_roles():
 
 def _repair_sqlite_user_foreign_keys():
     engine = db.engine
+    if engine.dialect.name != "sqlite":
+        return
+
     with engine.begin() as connection:
         courses_table = connection.exec_driver_sql(
             "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'courses'"
