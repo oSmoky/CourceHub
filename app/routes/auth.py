@@ -7,6 +7,14 @@ from app.models import User
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
+def _home_for_user(user):
+    if user.is_admin:
+        return url_for("admin.dashboard")
+    if user.is_instructor:
+        return url_for("instructor.dashboard")
+    return url_for("student.dashboard")
+
+
 @bp.route("/register", methods=("GET", "POST"))
 def register():
     if request.method == "POST":
@@ -26,8 +34,10 @@ def register():
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
-            flash("Account created. You can now log in.", "success")
-            return redirect(url_for("auth.login"))
+            session.clear()
+            session["user_id"] = user.user_id
+            flash("Account created. Welcome to CourseHub.", "success")
+            return redirect(_home_for_user(user))
 
     return render_template("auth/register.html")
 
@@ -45,11 +55,7 @@ def login():
             session.clear()
             session["user_id"] = user.user_id
             flash(f"Welcome back, {user.name}.", "success")
-            if user.is_admin:
-                return redirect(url_for("admin.dashboard"))
-            if user.is_instructor:
-                return redirect(url_for("instructor.dashboard"))
-            return redirect(url_for("student.dashboard"))
+            return redirect(_home_for_user(user))
 
     return render_template("auth/login.html")
 
@@ -58,4 +64,4 @@ def login():
 def logout():
     session.clear()
     flash("You have been logged out.", "info")
-    return redirect(url_for("courses.index"))
+    return redirect(url_for("auth.login"))

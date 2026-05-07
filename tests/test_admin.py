@@ -49,6 +49,50 @@ def test_login_page_uses_standalone_auth_layout(app):
     assert b'href="/courses"' not in response.data
 
 
+def test_register_page_uses_standalone_auth_layout(app):
+    response = app.test_client().get("/auth/register")
+
+    assert response.status_code == 200
+    assert b'class="auth-page"' in response.data
+    assert b"app-navbar" not in response.data
+    assert b"Create Account" in response.data
+
+
+def test_guest_cannot_view_course_catalog(app):
+    client = app.test_client()
+
+    response = client.get("/courses")
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/auth/login")
+
+
+def test_guest_home_redirects_to_login(app):
+    response = app.test_client().get("/")
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/auth/login")
+
+
+def test_registration_logs_student_in(app):
+    client = app.test_client()
+
+    response = client.post(
+        "/auth/register",
+        data={
+            "name": "New Student",
+            "email": "new-student@example.com",
+            "password": "secret",
+            "role": "student",
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.headers["Location"].endswith("/student/dashboard")
+    with client.session_transaction() as session:
+        assert session.get("user_id")
+
+
 def test_admin_can_create_course_for_instructor(app):
     client = app.test_client()
     client.post(

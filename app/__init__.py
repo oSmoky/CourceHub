@@ -2,7 +2,7 @@ from flask import Flask, g
 
 from config import Config
 
-from .auth_utils import load_logged_in_user
+from .auth_utils import load_logged_in_user, require_site_login
 from .extensions import db
 from .routes import admin, auth, courses, instructor, student, telegram_webapp
 
@@ -17,6 +17,7 @@ def create_app(config_object=None):
     db.init_app(app)
 
     app.before_request(load_logged_in_user)
+    app.before_request(require_site_login)
 
     @app.context_processor
     def inject_current_user():
