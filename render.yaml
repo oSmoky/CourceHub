@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: coursehub-web
+    name: courcehub
     runtime: python
     plan: free
     region: frankfurt
@@ -31,7 +31,7 @@ services:
     envVars:
       - key: SECRET_KEY
         fromService:
-          name: coursehub-web
+          name: courcehub
           type: web
           envVarKey: SECRET_KEY
       - key: DATABASE_URL
