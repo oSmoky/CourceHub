@@ -15,7 +15,7 @@ services:
           name: coursehub-db
           property: connectionString
       - key: TELEGRAM_BOT_TOKEN
-        sync: false
+        value: 8740701480:AAHV9akw5_rj0wxs8jVHRXVGo18Sa3XEJEM
 
   - type: worker
     name: coursehub-bot
@@ -35,7 +35,7 @@ services:
           name: coursehub-db
           property: connectionString
       - key: TELEGRAM_BOT_TOKEN
-        sync: false
+        value: 8740701480:AAHV9akw5_rj0wxs8jVHRXVGo18Sa3XEJEM
       - key: PUBLIC_BASE_URL
         fromService:
           name: coursehub-web
