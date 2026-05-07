@@ -40,6 +40,15 @@ def test_admin_login_redirects_to_dashboard(app):
     assert b"Admin Panel" in response.data
 
 
+def test_login_page_uses_standalone_auth_layout(app):
+    response = app.test_client().get("/auth/login")
+
+    assert response.status_code == 200
+    assert b'class="auth-page"' in response.data
+    assert b"app-navbar" not in response.data
+    assert b'href="/courses"' not in response.data
+
+
 def test_admin_can_create_course_for_instructor(app):
     client = app.test_client()
     client.post(

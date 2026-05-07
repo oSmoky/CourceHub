@@ -118,6 +118,95 @@ a:hover {
     max-width: 760px;
 }
 
+.auth-page {
+    background:
+        linear-gradient(180deg, rgba(15, 118, 110, 0.1), rgba(246, 248, 251, 0) 300px),
+        radial-gradient(circle at 12% 12%, rgba(217, 119, 6, 0.09), transparent 260px),
+        var(--app-bg);
+}
+
+.auth-page-shell {
+    align-items: center;
+    display: grid;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+}
+
+.auth-panel {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    box-shadow: var(--app-shadow);
+    display: grid;
+    gap: 1.15rem;
+    margin: 0 auto;
+    max-width: 27rem;
+    padding: clamp(1.25rem, 4vw, 2rem);
+    width: min(100%, 27rem);
+}
+
+.auth-brand {
+    align-items: center;
+    color: var(--app-text);
+    display: inline-flex;
+    font-size: 1rem;
+    font-weight: 800;
+    gap: 0.65rem;
+}
+
+.auth-brand-mark {
+    align-items: center;
+    background: linear-gradient(135deg, var(--app-primary), var(--app-accent));
+    border-radius: 8px;
+    color: #ffffff;
+    display: inline-flex;
+    font-size: 0.82rem;
+    font-weight: 800;
+    height: 2.25rem;
+    justify-content: center;
+    width: 2.25rem;
+}
+
+.auth-copy {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.auth-copy h1 {
+    font-size: 1.8rem;
+    letter-spacing: 0;
+    line-height: 1.15;
+    margin: 0;
+}
+
+.auth-copy p {
+    color: var(--app-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.auth-form {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.auth-alerts .alert:last-child,
+.auth-form .mb-3:last-of-type {
+    margin-bottom: 0.9rem !important;
+}
+
+.auth-secondary {
+    align-items: center;
+    border-top: 1px solid var(--app-border);
+    color: var(--app-muted);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.95rem;
+    gap: 0.35rem;
+    justify-content: center;
+    padding-top: 1rem;
+}
+
 .form-panel,
 .empty-state,
 .stat-tile,
