@@ -18,6 +18,7 @@ from telegram import (
 from telegram.error import BadRequest
 from telegram.ext import ApplicationBuilder, CallbackQueryHandler, CommandHandler, ContextTypes, MessageHandler, filters
 
+from config import DEFAULT_TELEGRAM_BOT_TOKEN, DEFAULT_TELEGRAM_WEB_APP_URL
 from app import create_app
 from app.extensions import db
 from app.models import Course, Enrollment, Progress
@@ -278,11 +279,14 @@ def _configured_web_app_url():
     if explicit_url:
         return explicit_url
 
-    public_base_url = os.getenv("PUBLIC_BASE_URL", os.getenv("RENDER_EXTERNAL_URL", "")).strip()
+    public_base_url = os.getenv("PUBLIC_BASE_URL", "").strip() or os.getenv("RENDER_EXTERNAL_URL", "").strip()
     if public_base_url:
         if "://" not in public_base_url:
             public_base_url = f"https://{public_base_url}"
         return urljoin(public_base_url.rstrip("/") + "/", "telegram/")
+
+    if os.getenv("RENDER"):
+        return DEFAULT_TELEGRAM_WEB_APP_URL
 
     return ""
 
@@ -810,7 +814,9 @@ def build_application(token):
 
 
 def main():
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    token = os.getenv("TELEGRAM_BOT_TOKEN") or (
+        DEFAULT_TELEGRAM_BOT_TOKEN if os.getenv("RENDER") else ""
+    )
     if not token:
         raise SystemExit("Set TELEGRAM_BOT_TOKEN in .env or environment variables.")
 

@@ -28,6 +28,15 @@ def test_configured_web_app_url_adds_https_to_host(monkeypatch):
     assert bot_main._configured_web_app_url() == "https://coursehub-web.onrender.com/telegram/"
 
 
+def test_configured_web_app_url_uses_render_default(monkeypatch):
+    monkeypatch.delenv("TELEGRAM_WEB_APP_URL", raising=False)
+    monkeypatch.delenv("PUBLIC_BASE_URL", raising=False)
+    monkeypatch.delenv("RENDER_EXTERNAL_URL", raising=False)
+    monkeypatch.setenv("RENDER", "true")
+
+    assert bot_main._configured_web_app_url() == "https://courcehub.onrender.com/telegram/"
+
+
 def test_web_app_keyboard_requires_https(monkeypatch):
     monkeypatch.setenv("TELEGRAM_WEB_APP_URL", "http://localhost:5000/telegram/")
 

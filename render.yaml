@@ -16,6 +16,10 @@ services:
           property: connectionString
       - key: TELEGRAM_BOT_TOKEN
         value: 8740701480:AAHV9akw5_rj0wxs8jVHRXVGo18Sa3XEJEM
+      - key: PUBLIC_BASE_URL
+        value: https://courcehub.onrender.com
+      - key: TELEGRAM_WEB_APP_URL
+        value: https://courcehub.onrender.com/telegram/
 
   - type: worker
     name: coursehub-bot
@@ -37,10 +41,9 @@ services:
       - key: TELEGRAM_BOT_TOKEN
         value: 8740701480:AAHV9akw5_rj0wxs8jVHRXVGo18Sa3XEJEM
       - key: PUBLIC_BASE_URL
-        fromService:
-          name: coursehub-web
-          type: web
-          property: host
+        value: https://courcehub.onrender.com
+      - key: TELEGRAM_WEB_APP_URL
+        value: https://courcehub.onrender.com/telegram/
 
 databases:
   - name: coursehub-db
